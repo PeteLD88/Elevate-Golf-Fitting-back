@@ -1,0 +1,128 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         Int       @id @default(autoincrement())
+  username   String
+  email      String
+  password   String
+  isAdmin   Boolean @default(false) @map("is_admin")
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  profile    Profile[]
+}
+
+model Profile {
+  id              Int      @id @default(autoincrement())
+  profile_image   String
+  userId          Int      @unique
+  glove_id        Int
+  shoe_id         Int
+  grip_id         Int
+  driver_head_id  Int
+  driver_shaft_id Int
+  iron_head_id    Int
+  iron_shaft_id   Int
+  ball_id         Int
+  created_at      DateTime
+  updated_at      DateTime
+  user            User     @relation(fields: [userId], references: [id])
+  glove           Glove    @relation(fields: [glove_id], references: [id])
+  shoe            Shoe     @relation(fields: [shoe_id], references: [id])
+  grip            Grip     @relation(fields: [grip_id], references: [id])
+  driverHead      DriverHead @relation(fields: [driver_head_id], references: [id])
+  ironHead        IronHead @relation(fields: [iron_head_id], references: [id])
+  driverShaft     Shaft    @relation("DriverShaft", fields: [driver_shaft_id], references: [id])
+  ironShaft       Shaft    @relation("IronShaft", fields: [iron_shaft_id], references: [id])
+  ball            Ball     @relation(fields: [ball_id], references: [id])
+}
+
+model Glove {
+  id           Int       @id @default(autoincrement())
+  glove_image  String
+  description  String
+  water_proof  Boolean
+  type         String
+  profiles     Profile[]
+}
+
+model Shoe {
+  id           Int       @id @default(autoincrement())
+  shoe_image   String
+  description  String
+  water_proof  Boolean
+  boa          Boolean
+  spike        Boolean
+  profiles     Profile[]
+}
+
+model Grip {
+  id          Int       @id @default(autoincrement())
+  grip_image  String
+  size        String
+  type        String
+  profiles    Profile[]
+}
+
+model DriverHead {
+  id           Int       @id @default(autoincrement())
+  brand        String
+  model        String
+  driver_image String
+  description  String
+  isforgive    Boolean
+  islowspin    Boolean
+  isadjust     Boolean
+  profiles     Profile[]
+}
+
+model IronHead {
+  id           Int       @id @default(autoincrement())
+  brand        String
+  model        String
+  iron_image   String
+  description  String
+  isforgive    Boolean
+  isforged     Boolean
+  profiles     Profile[]
+}
+
+model Shaft {
+  id           Int       @id @default(autoincrement())
+  brand        String
+  model        String
+  shaft_image  String
+  description  String
+  flex         String
+  launch       String
+  spin         String
+  weight       String
+  type         String
+  driverShafts Profile[] @relation("DriverShaft")
+  ironShafts   Profile[] @relation("IronShaft")
+}
+
+model Ball {
+  id          Int       @id @default(autoincrement())
+  ball_image  String
+  description String
+  spin        String
+  type        String
+  profiles    Profile[]
+}
+
+model Article {
+  id         Int      @id @default(autoincrement())
+  title      String
+  body       String
+  created_at DateTime
+}
